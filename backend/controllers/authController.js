@@ -3,11 +3,11 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 const generateToken = (userId, role) => {
-  return jwt.sign(
-    { userId, role },
-    process.env.JWT_SECRET || 'travelguide_jwt_super_secret_key_2026',
-    { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
-  );
+  const secret = process.env.JWT_SECRET || 'travelguide_jwt_super_secret_key_2026';
+  const rawExpires = (process.env.JWT_EXPIRES_IN || '').trim().replace(/['"]/g, '');
+  const expiresIn = /^\d+[smhdwy]?$/i.test(rawExpires) ? rawExpires : '7d';
+
+  return jwt.sign({ userId, role }, secret, { expiresIn });
 };
 
 // @desc    Register a new normal user
